@@ -49,17 +49,21 @@ radio.onReceivedString(function (receivedString) {
     }
 })
 input.onButtonPressed(Button.B, function () {
-    color = 2
-    butiner()
+    VL53L1X.init()
+    VL53L1X.setMeasurementTimingBudget(50000)
+    VL53L1X.setDistanceMode(VL53L1X.DistanceMode.Short)
+    untilV53L1X()
 })
 function untilV53L1X () {
-    maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 50)
+    maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 30)
     while (true) {
-        if (VL53L1X.readSingle() >= 35) {
+        serial.writeValue("dist", VL53L1X.readSingle())
+        if (VL53L1X.readSingle() >= 60) {
             StopMotors()
             break;
         }
     }
+    StopMotors()
 }
 input.onLogoEvent(TouchButtonEvent.Pressed, function () {
     StopMotors()
@@ -68,23 +72,24 @@ input.onLogoEvent(TouchButtonEvent.Pressed, function () {
 let color = 0
 let tirette = 0
 let enabledetection = 0
+maqueenPlusV2.I2CInit()
+serial.redirectToUSB()
+VL53L1X.init()
+VL53L1X.setDistanceMode(VL53L1X.DistanceMode.Short)
+VL53L1X.setMeasurementTimingBudget(50000)
+servos.P2.run(0)
 let readpin = 0
 let dist = 0
 let countdetection = 0
-maqueenPlusV2.I2CInit()
-serial.redirectToUSB()
 enabledetection = 0
 radio.setGroup(169)
 radio.setFrequencyBand(64)
 radio.setTransmitPower(7)
 tirette = 0
 color = 0
-VL53L1X.init()
-VL53L1X.setMeasurementTimingBudget(50000)
-VL53L1X.setDistanceMode(VL53L1X.DistanceMode.Short)
-servos.P2.run(0)
 basic.forever(function () {
     while (tirette == 0) {
+        serial.writeValue("dist", VL53L1X.readSingle())
         if (color == 1) {
             basic.clearScreen()
             basic.showIcon(IconNames.Skull)
@@ -95,7 +100,11 @@ basic.forever(function () {
         }
         if (color == 0) {
             basic.clearScreen()
-            basic.showIcon(IconNames.Scissors)
+            led.plotBarGraph(
+            VL53L1X.readSingle(),
+            400,
+            false
+            )
         }
         basic.pause(100)
     }
@@ -110,4 +119,13 @@ basic.forever(function () {
     butiner()
     tirette = 0
     color = 0
+})
+control.inBackground(function () {
+    while (false) {
+        led.plotBarGraph(
+        VL53L1X.readSingle(),
+        200,
+        true
+        )
+    }
 })
