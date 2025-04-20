@@ -28,17 +28,17 @@ function GOGOGO () {
     basic.pause(100)
     if (color == 2) {
         maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.LeftMotor, maqueenPlusV2.MyEnumDir.Forward, 0)
-        maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.RightMotor, maqueenPlusV2.MyEnumDir.Forward, 50)
+        maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.RightMotor, maqueenPlusV2.MyEnumDir.Forward, 55)
         basic.pause(1000)
     } else {
-        maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.LeftMotor, maqueenPlusV2.MyEnumDir.Forward, 50)
+        maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.LeftMotor, maqueenPlusV2.MyEnumDir.Forward, 55)
         maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.RightMotor, maqueenPlusV2.MyEnumDir.Forward, 0)
         basic.pause(1000)
     }
     maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Backward, 40)
     basic.pause(2000)
     maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 40)
-    basic.pause(2000)
+    basic.pause(1500)
 }
 radio.onReceivedString(function (receivedString) {
     if (receivedString == "BLUE") {
@@ -49,13 +49,13 @@ radio.onReceivedString(function (receivedString) {
     }
 })
 input.onButtonPressed(Button.B, function () {
-    color = 1
+    color = 2
     butiner()
 })
 function untilV53L1X () {
-    maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 30)
+    maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 50)
     while (true) {
-        if (VL53L1X.readSingle() >= 40) {
+        if (VL53L1X.readSingle() >= 35) {
             StopMotors()
             break;
         }
@@ -101,7 +101,7 @@ basic.forever(function () {
     }
     basic.clearScreen()
     basic.showIcon(IconNames.Angry)
-    basic.pause(2000)
+    basic.pause(85000)
     enabledetection = 0
     GOGOGO()
     untilV53L1X()
