@@ -10,6 +10,7 @@ function StopMotors () {
 }
 input.onButtonPressed(Button.A, function () {
     enabledetection = 0
+    color = 1
     GOGOGO()
     untilV53L1X()
     StopMotors()
@@ -20,20 +21,31 @@ function butiner () {
     servos.P2.run(30)
 }
 function GOGOGO () {
-    maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 100)
-    basic.pause(1000)
-    maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 220)
-    basic.pause(2500)
+    if (color == 2) {
+        maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.LeftMotor, maqueenPlusV2.MyEnumDir.Forward, 103)
+        maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.RightMotor, maqueenPlusV2.MyEnumDir.Forward, 100)
+        basic.pause(1000)
+        maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.LeftMotor, maqueenPlusV2.MyEnumDir.Forward, 225)
+        maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.RightMotor, maqueenPlusV2.MyEnumDir.Forward, 220)
+        basic.pause(2200)
+    } else {
+        maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.LeftMotor, maqueenPlusV2.MyEnumDir.Forward, 100)
+        maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.RightMotor, maqueenPlusV2.MyEnumDir.Forward, 103)
+        basic.pause(1000)
+        maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.LeftMotor, maqueenPlusV2.MyEnumDir.Forward, 220)
+        maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.RightMotor, maqueenPlusV2.MyEnumDir.Forward, 225)
+        basic.pause(2200)
+    }
     maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 50)
     basic.pause(100)
     if (color == 2) {
         maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.LeftMotor, maqueenPlusV2.MyEnumDir.Forward, 0)
         maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.RightMotor, maqueenPlusV2.MyEnumDir.Forward, 60)
-        basic.pause(1000)
+        basic.pause(1200)
     } else {
         maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.LeftMotor, maqueenPlusV2.MyEnumDir.Forward, 60)
         maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.RightMotor, maqueenPlusV2.MyEnumDir.Forward, 0)
-        basic.pause(1000)
+        basic.pause(1200)
     }
     maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Backward, 40)
     basic.pause(2000)
@@ -49,10 +61,13 @@ radio.onReceivedString(function (receivedString) {
     }
 })
 input.onButtonPressed(Button.B, function () {
-    VL53L1X.init()
-    VL53L1X.setMeasurementTimingBudget(50000)
-    VL53L1X.setDistanceMode(VL53L1X.DistanceMode.Short)
+    enabledetection = 0
+    color = 2
+    GOGOGO()
     untilV53L1X()
+    StopMotors()
+    butiner()
+    enabledetection = 0
 })
 function untilV53L1X () {
     maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 30)
@@ -68,8 +83,10 @@ function untilV53L1X () {
     StopMotors()
 }
 input.onLogoEvent(TouchButtonEvent.Pressed, function () {
-    StopMotors()
-    servos.P1.setAngle(90)
+    VL53L1X.init()
+    VL53L1X.setMeasurementTimingBudget(50000)
+    VL53L1X.setDistanceMode(VL53L1X.DistanceMode.Short)
+    untilV53L1X()
 })
 let color = 0
 let tirette = 0
@@ -123,11 +140,9 @@ basic.forever(function () {
     color = 0
 })
 control.inBackground(function () {
-    while (false) {
-        led.plotBarGraph(
-        VL53L1X.readSingle(),
-        200,
-        true
-        )
+    while (tirette == 0) {
+        basic.pause(100)
     }
+    basic.pause(99000)
+    butiner()
 })
