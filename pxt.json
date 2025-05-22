@@ -5,7 +5,7 @@
         "core": "*",
         "radio": "*",
         "microphone": "*",
-        "vl53l1x-calliopemini": "github:cho934/vl53l1x-calliope#master",
+        "vl53l1x-calliopemini": "github:cho934/vl53l1x-calliope#v1.0.0",
         "maqueenPlusV2": "github:dfrobot/pxt-dfrobot_maqueenplus_v20#v2.2.20",
         "servo": "*"
     },
