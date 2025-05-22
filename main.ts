@@ -34,17 +34,19 @@ function GOGOGO () {
         basic.pause(1000)
         maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.LeftMotor, maqueenPlusV2.MyEnumDir.Forward, 220)
         maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.RightMotor, maqueenPlusV2.MyEnumDir.Forward, 225)
+        enabledetection = 1
         basic.pause(2200)
     }
     maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 50)
     basic.pause(100)
+    enabledetection = 0
     if (color == 2) {
-        maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.LeftMotor, maqueenPlusV2.MyEnumDir.Forward, 0)
+        maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.LeftMotor, maqueenPlusV2.MyEnumDir.Backward, 5)
         maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.RightMotor, maqueenPlusV2.MyEnumDir.Forward, 60)
         basic.pause(1200)
     } else {
         maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.LeftMotor, maqueenPlusV2.MyEnumDir.Forward, 60)
-        maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.RightMotor, maqueenPlusV2.MyEnumDir.Forward, 0)
+        maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.RightMotor, maqueenPlusV2.MyEnumDir.Backward, 5)
         basic.pause(1200)
     }
     maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Backward, 40)
@@ -91,15 +93,15 @@ input.onLogoEvent(TouchButtonEvent.Pressed, function () {
 let color = 0
 let tirette = 0
 let enabledetection = 0
+let countdetection = 0
+let distancedetection = 0
+let dist = 0
 maqueenPlusV2.I2CInit()
 serial.redirectToUSB()
 VL53L1X.init()
 VL53L1X.setDistanceMode(VL53L1X.DistanceMode.Short)
 VL53L1X.setMeasurementTimingBudget(50000)
 servos.P2.run(0)
-let readpin = 0
-let dist = 0
-let countdetection = 0
 enabledetection = 0
 radio.setGroup(169)
 radio.setFrequencyBand(64)
@@ -108,7 +110,8 @@ tirette = 0
 color = 0
 basic.forever(function () {
     while (tirette == 0) {
-        serial.writeValue("dist", VL53L1X.readSingle())
+        distancedetection = VL53L1X.readSingle()
+        serial.writeValue("dist", distancedetection)
         if (color == 1) {
             basic.clearScreen()
             basic.showIcon(IconNames.Skull)
@@ -120,7 +123,7 @@ basic.forever(function () {
         if (color == 0) {
             basic.clearScreen()
             led.plotBarGraph(
-            VL53L1X.readSingle(),
+            distancedetection,
             400,
             false
             )
@@ -130,11 +133,9 @@ basic.forever(function () {
     basic.clearScreen()
     basic.showIcon(IconNames.Angry)
     basic.pause(85000)
-    enabledetection = 0
     GOGOGO()
     untilV53L1X()
     StopMotors()
-    enabledetection = 0
     butiner()
     tirette = 0
     color = 0
@@ -145,4 +146,22 @@ control.inBackground(function () {
     }
     basic.pause(99000)
     butiner()
+})
+control.inBackground(function () {
+    basic.pause(1000)
+    while (true) {
+        distancedetection = VL53L1X.readSingle()
+        serial.writeValue("dist", distancedetection)
+        if (enabledetection == 1) {
+            if ((0 as any) < (50 as any)) {
+                StopMotors()
+                break;
+            }
+        }
+        if ((0 as any) >= (70 as any)) {
+            StopMotors()
+            break;
+        }
+        basic.pause(50)
+    }
 })
