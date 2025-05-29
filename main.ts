@@ -90,12 +90,12 @@ input.onLogoEvent(TouchButtonEvent.Pressed, function () {
     VL53L1X.setDistanceMode(VL53L1X.DistanceMode.Short)
     untilV53L1X()
 })
+let distancedetection = 0
 let color = 0
 let tirette = 0
 let enabledetection = 0
-let countdetection = 0
-let distancedetection = 0
 let dist = 0
+let countdetection = 0
 maqueenPlusV2.I2CInit()
 serial.redirectToUSB()
 VL53L1X.init()
@@ -141,13 +141,6 @@ basic.forever(function () {
     color = 0
 })
 control.inBackground(function () {
-    while (tirette == 0) {
-        basic.pause(100)
-    }
-    basic.pause(99000)
-    butiner()
-})
-control.inBackground(function () {
     basic.pause(1000)
     while (true) {
         distancedetection = VL53L1X.readSingle()
@@ -164,4 +157,11 @@ control.inBackground(function () {
         }
         basic.pause(50)
     }
+})
+control.inBackground(function () {
+    while (tirette == 0) {
+        basic.pause(100)
+    }
+    basic.pause(99000)
+    butiner()
 })
